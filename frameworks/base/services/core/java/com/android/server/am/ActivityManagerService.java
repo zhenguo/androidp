@@ -5099,10 +5099,12 @@ public class ActivityManagerService extends IActivityManager.Stub
             boolean validateIncomingUser) {
         enforceNotIsolatedCaller("startActivity");
 
+		// validateIncomingUser 写死了true,是个什么操作
         userId = mActivityStartController.checkTargetUser(userId, validateIncomingUser,
                 Binder.getCallingPid(), Binder.getCallingUid(), "startActivityAsUser");
 
         // TODO: Switch to user app stacks here.
+        // 通过ActivityStarter启动Activity
         return mActivityStartController.obtainStarter(intent, "startActivityAsUser")
                 .setCaller(caller)
                 .setCallingPackage(callingPackage)

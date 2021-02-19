@@ -482,7 +482,7 @@ class ActivityStarter {
         try {
             // TODO(b/64750076): Look into passing request directly to these methods to allow
             // for transactional diffs and preprocessing.
-            if (mRequest.mayWait) {
+            if (mRequest.mayWait) { // mayWait为true
                 return startActivityMayWait(mRequest.caller, mRequest.callingUid,
                         mRequest.callingPackage, mRequest.intent, mRequest.resolvedType,
                         mRequest.voiceSession, mRequest.voiceInteractor, mRequest.resultTo,

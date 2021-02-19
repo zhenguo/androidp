@@ -4122,10 +4122,16 @@ public class ActivityManager {
     /**
      * @hide
      */
+     /**
+     静态对象IActivityManagerSingleton适合反射，就是HOOK
+			*/
     public static IActivityManager getService() {
         return IActivityManagerSingleton.get();
     }
 
+	/**
+	使用Singleton对象包裹了IActivityManager Binder对象
+	*/
     private static final Singleton<IActivityManager> IActivityManagerSingleton =
             new Singleton<IActivityManager>() {
                 @Override

@@ -1632,10 +1632,18 @@ public class Instrumentation {
      *
      * {@hide}
      */
+     /**
+     who Activity.this
+     contextThread ActivityThread.getApplicationThread() --> ApplicationThread AMS通过这个Binder与App进程通信
+     token: 与WMS有关？
+     target: Activity.this
+     intent: 要启动的Activity Intent
+     
+     */
     public ActivityResult execStartActivity(
             Context who, IBinder contextThread, IBinder token, Activity target,
             Intent intent, int requestCode, Bundle options) {
-        IApplicationThread whoThread = (IApplicationThread) contextThread;
+        IApplicationThread whoThread = (IApplicationThread) contextThread; // 转换为Binder接口
         Uri referrer = target != null ? target.onProvideReferrer() : null;
         if (referrer != null) {
             intent.putExtra(Intent.EXTRA_REFERRER, referrer);
@@ -1663,14 +1671,14 @@ public class Instrumentation {
             }
         }
         try {
-            intent.migrateExtraStreamToClipData();
-            intent.prepareToLeaveProcess(who);
+            intent.migrateExtraStreamToClipData(); // ??
+            intent.prepareToLeaveProcess(who); // ?
             int result = ActivityManager.getService()
                 .startActivity(whoThread, who.getBasePackageName(), intent,
                         intent.resolveTypeIfNeeded(who.getContentResolver()),
                         token, target != null ? target.mEmbeddedID : null,
                         requestCode, 0, null, options);
-            checkStartActivityResult(result, intent);
+            checkStartActivityResult(result, intent); // 检查AMS返回的结果 
         } catch (RemoteException e) {
             throw new RuntimeException("Failure from system", e);
         }
@@ -1997,6 +2005,7 @@ public class Instrumentation {
         }
 
         switch (res) {
+			// START_INTENT_NOT_RESOLVED START_CLASS_NOT_FOUND 插件化要解决的问题
             case ActivityManager.START_INTENT_NOT_RESOLVED:
             case ActivityManager.START_CLASS_NOT_FOUND:
                 if (intent instanceof Intent && ((Intent)intent).getComponent() != null)
